@@ -1,6 +1,6 @@
 # Panovista L7 Agent Firewall (Evaluation Edition) - Core V3.0
 
-**Zero-Trust, Stateless L7 Security Proxy for Enterprise AI Deployments.**
+**[🌐 Visit panovista.io](https://panovista.io)** | **Zero-Trust, Stateless L7 Security Proxy for Enterprise AI Deployments.**
 
 Panovista provides an offline, cryptographically locked architectural boundary for AI Agents and Model Context Protocol (MCP) servers. By dropping this stateless sidecar proxy into your Virtual Private Cloud (VPC), you instantly enforce strict L7 routing constraints, payload validation, and Article 12/PCI-DSS compliance logging without a single external ping to a vendor server.
 
@@ -111,4 +111,15 @@ Sovereign builds include:
 * Sequential tamper-evident log-chaining algorithms.
 * Native hardware security module (HSM) integrations via PKCS#11.
 
-To upgrade your evaluation environment to a permanent enterprise license, contact our sales engineering team to receive your scoped Enterprise Token and GHCR Registry Access Keys.
+To upgrade your evaluation environment to a permanent enterprise license, visit **[panovista.io](https://panovista.io)** or contact our sales engineering team at **[ian.ayliffe@panovistamarketing.com](mailto:ian.ayliffe@panovistamarketing.com)** to receive your scoped Enterprise Token and GHCR Registry Access Keys.
+
+## Upgrading to Sovereign Enterprise
+
+The Panovista Sovereign Enterprise tier transitions your infrastructure to our strictly-versioned private registry, removes the cryptographic time-bomb, and unlocks high-margin compliance modules. 
+
+Sovereign builds include:
+* Native compilation using the FIPS 140-3 validated cryptographic toolchain (`GOEXPERIMENT=boringcrypto`).
+* Sequential tamper-evident log-chaining algorithms.
+* Native hardware security module (HSM) integrations via PKCS#11.
+
+
