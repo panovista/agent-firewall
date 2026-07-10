@@ -28,3 +28,5 @@ go.sum
 # schemas/corporate_rules.json is allowed, but block local test ones:
 schemas/test_*.json
 *.go
+
+state/
