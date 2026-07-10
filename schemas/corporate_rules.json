@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "ruleset_name": "Evaluation Baseline DLP",
+  "description": "Default PII and Secret scrubbing rules for Panovista Evaluation Edition",
+  "rules": [
+    {
+      "id": "dlp-001",
+      "name": "Redact AWS Access Keys",
+      "pattern": "(?i)AKIA[0-9A-Z]{16}",
+      "action": "redact"
+    },
+    {
+      "id": "dlp-002",
+      "name": "Redact Credit Card Numbers",
+      "pattern": "\\b(?:\\d[ -]*?){13,16}\\b",
+      "action": "redact"
+    },
+    {
+      "id": "dlp-003",
+      "name": "Redact Social Security Numbers",
+      "pattern": "\\b\\d{3}-\\d{2}-\\d{4}\\b",
+      "action": "redact"
+    }
+  ]
+}
