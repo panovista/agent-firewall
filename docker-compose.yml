@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   pano-firewall-instance:
-    build: .
+    # CRITICAL: Pulls the pre-compiled, closed-source binary from your cloud registry
+    image: ghcr.io/panovista/agent-firewall:latest
     ports:
       - "8080:8080"
     volumes:
@@ -13,12 +14,12 @@ services:
       - PANOVISTA_ENV_ID=vpc-nexus-prod-99
       - TARGET_MCP_URL=http://mock-mcp-backend:80
       
-      # ==========================================================
+      # ==============================================================
       # 14-DAY TRIAL MODE ACTIVE BY DEFAULT
-      # To upgrade to the 12-Month Sovereign Enterprise Tier, 
+      # To upgrade to the 12-Month Sovereign Enterprise Tier,
       # uncomment the line below and paste your purchased token.
-      # ==========================================================
-      # - PANOVISTA_LICENSE_TOKEN=pv_lic_YOUR_TOKEN_HERE
+      # ==============================================================
+      # - PANOVISTA_LICENSE=pv_lic_YOUR_TOKEN_HERE
 
     depends_on:
       - mock-mcp-backend
