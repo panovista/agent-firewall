@@ -27,3 +27,4 @@ go.sum
 # 5. Local Development Schemas (Unless explicitly intended for public)
 # schemas/corporate_rules.json is allowed, but block local test ones:
 schemas/test_*.json
+*.go

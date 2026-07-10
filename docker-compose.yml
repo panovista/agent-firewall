@@ -1,0 +1,31 @@
+services:
+  panovista-core:
+    build: .
+    container_name: panovista-local-test
+    ports:
+      - "4321:4321"
+    environment:
+      # Core Routing
+      - PANOVISTA_PORT=4321
+      - TARGET_MCP_URL=http://mock-mcp-backend:80
+      - PANOVISTA_MODE=sidecar
+      
+      # Strict Cryptographic Licensing & Scope
+      - PANOVISTA_ENV_ID=vpc-eval
+      - PANOVISTA_LICENSE=pv_lic_eyJjdXN0b21lcl9pZCI6InB1YmxpYy1ldmFsLTAwMSIsImxpY2Vuc2VfdGllciI6InN0YW5kYXJkX3ZwYyIsImlzc3VlZF9hdCI6MTc4MzYxMTQ0MiwiZXhwaXJlc19hdCI6MTc4NDgyMTA0MiwidGFyZ2V0X2Vudmlyb25tZW50X2lkIjoidnBjLWV2YWwifQ.d471ed427344b1ae252fae7091ad903ef629cad2b1cd5557dd0e6dd571c8c8277dee29844e814475f3712689b1416c94babf323ad5c3b7d546ccf8174d0b9803
+      
+      # Telemetry & Execution Posture
+      - PANOVISTA_ALLOW_HEADLESS=TRUE
+      - PANOVISTA_LOG_LEVEL=debug
+      - UPSTREAM_PROVIDER=openai
+      - PROVIDER_API_KEY=sk-mock-corporate-key-12345
+    depends_on:
+      - mock-mcp-backend
+    volumes:
+      - ./schemas:/etc/panovista:ro
+
+  mock-mcp-backend:
+    image: kennethreitz/httpbin
+    container_name: panovista-mock-db
+    ports:
+      - "8888:80"
