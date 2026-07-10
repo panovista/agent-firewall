@@ -2,51 +2,57 @@
 
 **[🌐 Visit panovista.io](https://panovista.io)** | **Zero-Trust, Stateless L7 Security Proxy for Enterprise AI Deployments.**
 
-Panovista provides an offline, cryptographically locked architectural boundary for AI Agents and Model Context Protocol (MCP) servers. By dropping this stateless sidecar proxy into your Virtual Private Cloud (VPC), you instantly enforce strict L7 routing constraints, payload validation, and Article 12/PCI-DSS compliance logging without a single external ping to a vendor server.
+Panovista provides an offline, cryptographically locked architectural boundary for AI Agents and Model Context Protocol (MCP) servers. By dropping this stateless sidecar proxy into your network, you instantly enforce strict L7 routing constraints, payload validation, and compliance logging without a single external ping to an outside vendor server.
 
-## The 14-Day Cryptographic Trial
+## The Frictionless 14-Day Evaluation
 
-This public repository provides access to the 14-Day Evaluation Tier of the V3.0 Core Engine.
+This public repository provides access to the 14-Day Evaluation Tier of the V3.0 Core Engine. 
 
-> **SECURITY NOTICE:** Panovista operates on mathematically enforced Zero-Trust principles. This evaluation container requires a cryptographically signed Ed25519 token to boot. Exactly 14 days after the token's issue date, the internal failsafe will trigger, and the proxy will permanently lock itself to prevent unauthorized production use.
+Unlike older versions, this evaluation container **does not require an upfront token to boot**. Instead, it uses a Frictionless First-Boot mechanism. The moment the container launches on your network, it securely creates an internal cryptographic timestamp file within your mounted state volume. The proxy will seamlessly route traffic for 14 calendar days. On day 15, the evaluation window closes, and the proxy will permanently lock itself until a valid 12-month enterprise license token is provided.
 
 ---
 
 ## Quick Start Deployment
 
-Deploying the Panovista proxy requires zero external dependencies. It runs completely offline in your local environment with a strictly bounded memory footprint (<20MB).
+Deploying the Panovista proxy requires zero external dependencies. It runs completely offline in your local environment with a strictly bounded memory footprint.
 
-### 1. Create your `docker-compose.yml`
+### 1. Prepare Your Host Directories
+Create an empty local directory named `state` to house the persistent evaluation trial clock metadata:
 
-Copy the following configuration file into your target environment.
+```bash
+mkdir -p state
+```
+
+### 2. Create Your `docker-compose.yml`
+
+Copy the following streamlined configuration file into your target environment folder.
 
 ```yaml
 version: '3.8'
 
 services:
   panovista-security-proxy:
-    image: ghcr.io/panovista/agent-firewall:eval-v3
-    container_name: panovista-eval
+    image: ghcr.io/panovista/agent-firewall:latest
+    container_name: panovista-core-v3
     ports:
-      - "4321:4321"
+      - "8080:8080"
     volumes:
-      # Mount your local DLP schema rules to the proxy's isolated read-only directory
-      - ./schemas:/etc/panovista:ro
+      # Mandatory persistent directory for tracking the 14-day evaluation clock
+      - ./state:/var/lib/panovista
     environment:
-      - PANOVISTA_PORT=4321
-      - TARGET_MCP_URL=http://your-internal-mcp-server:8080
-      - PANOVISTA_MODE=sidecar
-      # The 14-Day Cryptographic Evaluation Token
-      - PANOVISTA_LICENSE=<INSERT_14_DAY_EVAL_TOKEN_HERE>
+      - PANOVISTA_PORT=8080
+      - TARGET_MCP_URL=http://your-internal-mcp-server:80
+      - PANOVISTA_ENV_ID=eval-vpc-local
       - PANOVISTA_ALLOW_HEADLESS=TRUE
-      - PANOVISTA_LOG_LEVEL=info
 
-      # Optional: Zero-Trust API Key Injection for external LLM routing
-      # - UPSTREAM_PROVIDER=anthropic
-      # - PROVIDER_API_KEY=sk-ant-xxx...
+      # ==========================================================
+      # 14-DAY TRIAL ACTIVE BY DEFAULT
+      # To upgrade to the 12-Month Paid Tier, uncomment below:
+      # - PANOVISTA_LICENSE_TOKEN=pv_lic_YOUR_TOKEN_HERE
+      # ==========================================================
 ```
 
-### 2. Boot the Firewall
+### 3. Boot the Firewall
 
 Run the following command to pull the signed Panovista image and boot the engine:
 
@@ -54,72 +60,98 @@ Run the following command to pull the signed Panovista image and boot the engine
 docker compose up -d
 ```
 
-### 3. Verify Telemetry & Orchestration Probes
+### 4. Verify Telemetry & Trial Status
 
-Check your container logs to ensure the offline license verified, the DLP schemas loaded, and the strict L7 traffic parsing is active:
+Check your container logs to ensure the evaluation clock initialized, the persistent storage mounted, and the strict L7 traffic parsing is active:
 
 ```bash
-docker logs -f panovista-eval
+docker compose logs panovista-security-proxy
 ```
 
-You should see the Phase 1 Ingress Stamp from our Passive Telemetry Odometer outputting to `stdout`, along with the Engine initialization:
+You should see our structured Passive Telemetry metrics outputting directly to `stdout`, confirming a successful local first boot:
 
 ```text
-{"level":"info","tag":"PANOVISTA_METRIC","status":"boot","node_id":"panovista-eval","license_tier_claimed":"standard_vpc","uptime_seconds":0,"peak_concurrent_streams":0}
-2026/07/09 17:18:46 [SYSTEM] Loaded DLP schema rule file: corporate_rules.json
-2026/07/09 17:18:46 [SYSTEM] Successfully loaded 1 DLP schema(s).
-2026/07/09 17:18:46 [SYSTEM] Panovista Evaluation Edition V3.0 Initialized on port 4321 [Tier: standard_vpc]
+panovista-core-v3 | 2026/07/10 12:19:25 [*] No license token provided. Initiating Evaluation Tier checks...
+panovista-core-v3 | 2026/07/10 12:19:25 ⏱️ FIRST BOOT DETECTED. 14-Day Evaluation Clock Started.
+panovista-core-v3 | 2026/07/10 12:19:25 ⚠️ EVALUATION MODE ACTIVE. 14 Days Remaining.
+panovista-core-v3 | 2026/07/10 12:19:25 {"level":"info","tag":"PANOVISTA_METRIC","status":"boot","node_id":"8ea012c93647","license_tier_claimed":"core_v3","uptime_seconds":0,"peak_concurrent_streams":0}
+panovista-core-v3 | 2026/07/10 12:19:25 🚀 Panovista Core V3 active on port 8080
 ```
 
-You can verify the container readiness for your orchestrator via our native health probes:
+Verify the container readiness for your orchestrator via our native health probes:
 
 ```bash
 # Returns 200 OK instantly if the HTTP server socket loop is up
-curl http://localhost:4321/health/live
+curl http://localhost:8080/health/live
 
-# Returns 200 OK only after initialization completes, the license validates, and DLP schemas parse
-curl http://localhost:4321/health/ready
+# Returns 200 OK only after trial validation passes or license verifies
+curl http://localhost:8080/health/ready
 ```
-
-Your downstream MCP database is now shielded.
 
 ---
 
-## Configuration Lexicon (V3.0)
+## Configuration Lexicon (V3.0 Core)
 
-Panovista's runtime behavior is controlled entirely via environment variables and local declarative JSON schemas.
+Panovista's runtime behavior is controlled cleanly via environment variables and local volume mappings.
 
 | Variable Name | Required | Default | Functional Description |
 | :--- | :--- | :--- | :--- |
-| `PANOVISTA_MODE` | Yes | `sidecar` | Sets layout architecture: sidecar (protecting one tool) or gateway (routing multiple tools). |
-| `TARGET_MCP_URL` | Yes | *None* | The internal, isolated network URL of the raw upstream Model Context Protocol tool server. |
-| `UPSTREAM_PROVIDER` | No | *None* | External LLM routing destination if injecting API keys (e.g., openai, anthropic). |
-| `PROVIDER_API_KEY` | No | *None* | Securely injected upstream platform credential. |
-| `PANOVISTA_PORT` | No | `4321` | Local port the proxy core listens on for incoming AI agent or IDE requests. |
-| `PANOVISTA_LOG_LEVEL` | No | `info` | Filter constraints for audit log verbosity (debug, info, warn, error). |
-| `SCHEMA_MOUNT_PATH` | No | `/etc/panovista` | Local directory containing declarative JSON schemas for Data Loss Prevention (DLP) rules. |
-| `PANOVISTA_LICENSE` | Yes | *None* | The offline, cryptographically signed Ed25519 token string dictating contract compliance. |
+| `TARGET_MCP_URL` | Yes | *None* | The internal network URL of the raw upstream tool server or LLM backend being shielded. |
+| `PANOVISTA_ENV_ID` | Yes | *None* | Ties binary execution to a specific VPC or environment ID for isolation matching. |
+| `PANOVISTA_ALLOW_HEADLESS` | Yes | *None* | Bypasses the anti-automation security lock for cloud orchestration engines (`TRUE`). |
+| `PANOVISTA_PORT` | No | `8080` | Local port the proxy core listens on for incoming AI agent or client application requests. |
+| `PANOVISTA_LICENSE_TOKEN` | No | *None* | The offline, cryptographically signed Ed25519 token string that unlocks the unlimited tier. |
+
+---
+
+## Instant Attack Deflection Test
+
+Prove Panovista is actively shielding your backend parameters. Run a standard curl command attempting a Layer 4 Server-Side Request Forgery (SSRF) bypass through the proxy:
+
+```bash
+curl -X POST http://localhost:8080/ \
+  -H "Content-Type: application/json" \
+  -d '{
+        "jsonrpc": "2.0", 
+        "id": "verification-test-001", 
+        "method": "chat", 
+        "params": {
+            "name": "agent", 
+            "arguments": {
+                "target": "[http://169.254.169.254/latest/meta-data/](http://169.254.169.254/latest/meta-data/)"
+            }
+        }
+      }'
+```
+
+### Expected Defensive Response
+The proxy instantly intercepts the forbidden cloud infrastructure address, terminates the transaction safely before it breaches your perimeter, and returns a sanitized JSON-RPC error payload:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "verification-test-001",
+  "error": {
+    "code": -32001,
+    "message": "Security Policy Violation" 
+  }
+}
+```
 
 ---
 
 ## Upgrading to Sovereign Enterprise
 
-The Panovista Sovereign Enterprise tier transitions your infrastructure to our strictly-versioned private registry, removes the cryptographic time-bomb, and unlocks high-margin compliance modules. 
+The Panovista Sovereign Enterprise tier transitions your infrastructure to our strictly-versioned private registry, removes the 14-day trial clock file limitations, and unlocks unlimited enterprise scale.
 
 Sovereign builds include:
-* Native compilation using the FIPS 140-3 validated cryptographic toolchain (`GOEXPERIMENT=boringcrypto`).
-* Sequential tamper-evident log-chaining algorithms.
-* Native hardware security module (HSM) integrations via PKCS#11.
+* Native compilation using a FIPS 140-3 validated cryptographic toolchain.
+* Hardcoded defensive thresholds: 5MB egress volume choking, 300 req/min rate limiting, and a 20-layer deep JSON recursion filter.
+* Injectable PEM-encoded Public Key certificates (`JWT_PUBLIC_KEY`) for full IdP identity access verification.
 
-To upgrade your evaluation environment to a permanent enterprise license, visit **[panovista.io](https://panovista.io)** or contact our sales engineering team at **[ian.ayliffe@panovistamarketing.com](mailto:ian.ayliffe@panovistamarketing.com)** to receive your scoped Enterprise Token and GHCR Registry Access Keys.
+To upgrade your evaluation environment to a permanent enterprise license, visit **[panovista.io](https://panovista.io)** or contact our sales engineering team at **[ian.ayliffe@panovistamarketing.com](mailto:ian.ayliffe@panovistamarketing.com)**  to receive your scoped Enterprise Token and GHCR Registry Access Keys.
 
-## Upgrading to Sovereign Enterprise
 
-The Panovista Sovereign Enterprise tier transitions your infrastructure to our strictly-versioned private registry, removes the cryptographic time-bomb, and unlocks high-margin compliance modules. 
 
-Sovereign builds include:
-* Native compilation using the FIPS 140-3 validated cryptographic toolchain (`GOEXPERIMENT=boringcrypto`).
-* Sequential tamper-evident log-chaining algorithms.
-* Native hardware security module (HSM) integrations via PKCS#11.
 
 

@@ -1,22 +1,20 @@
-# ---------------------------------------------------
-# STAGE 1: COMPILATION
-# ---------------------------------------------------
-FROM golang:1.21-alpine AS builder
-
+# Stage 1: Builder
+FROM golang:1.25-alpine AS builder
 WORKDIR /app
-COPY main.go .
 
-# Initialize a temporary Go module and compile as a statically linked binary
+# Install root CA certificates for HTTPS routing
+RUN apk add --no-cache ca-certificates
+
+COPY . .
 RUN go mod init panovista-core && \
+    go mod tidy && \
     CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o panovista .
 
-# ---------------------------------------------------
-# STAGE 2: IMMUTABLE SCRATCH CONTAINER
-# ---------------------------------------------------
+# Stage 2: The Zero-Surface Vault
 FROM scratch
 
-# Copy only the compiled machine-code binary from Stage 1
-COPY --from=builder /app/panovista /panovista
+# Import the certificates from the builder stage
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-# Force the container to execute the binary directly
+COPY --from=builder /app/panovista /panovista
 ENTRYPOINT ["/panovista"]

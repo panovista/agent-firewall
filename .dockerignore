@@ -1,0 +1,14 @@
+# Exclude local offline tools
+mint_license.go
+master_private.key
+*.key
+
+# Exclude deployment/git files
+.git
+.gitignore
+deploy.ps1
+.github/
+
+# Exclude local state and schemas
+state/
+schemas/
