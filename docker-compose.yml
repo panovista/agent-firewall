@@ -8,7 +8,8 @@ services:
       - "8080:8080"
     volumes:
       # CRITICAL: This persistent state folder tracks the 14-day trial lock.
-      - ./state:/var/lib/panovista
+      - ./state:/var/lib/panovista  # Ensures the trial.lock file persists across restarts
+      - ./panovista-config:/etc/panovista/policies:ro
     environment:
       - PANOVISTA_ALLOW_HEADLESS=TRUE
       - PANOVISTA_ENV_ID=vpc-nexus-prod-99

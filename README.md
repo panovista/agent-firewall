@@ -10,6 +10,8 @@ This public repository provides access to the 14-Day Evaluation Tier of the V3.0
 
 Unlike older versions, this evaluation container **does not require an upfront token to boot**. Instead, it uses a Frictionless First-Boot mechanism. The moment the container launches on your network, it securely creates an internal cryptographic timestamp file within your mounted state volume. The proxy will seamlessly route traffic for 14 calendar days. On day 15, the evaluation window closes, and the proxy will permanently lock itself until a valid 12-month enterprise license token is provided.
 
+State Persistence: Panovista utilizes a local volume at /var/lib/panovista to track the evaluation trial period. Ensure this directory is mapped to a persistent host volume in your docker-compose configuration. Deleting this directory or failing to map it will reset your evaluation window.
+
 ---
 
 ## Quick Start Deployment
@@ -38,7 +40,8 @@ services:
       - "8080:8080"
     volumes:
       # Mandatory persistent directory for tracking the 14-day evaluation clock
-      - ./state:/var/lib/panovista
+      - ./state:/var/lib/panovista  # Ensures the trial.lock file persists across restarts
+      - ./panovista-config:/etc/panovista/policies:ro
     environment:
       - PANOVISTA_PORT=8080
       - TARGET_MCP_URL=http://your-internal-mcp-server:80

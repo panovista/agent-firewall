@@ -10,10 +10,13 @@ private.pem
 
 # 2. Token Minting Engine (Intellectual Property)
 mint_license.go
+mint.go
 license_generator/
 
 # 3. Compiled Binaries & Go Environment
 PanovistaFirewall.exe
+panovista-proxy
+panovista-proxy.exe
 *.exe
 *.dll
 *.so
