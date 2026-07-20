@@ -1,35 +1,4 @@
-# -------------------------------------------------------------------
-# PANOVISTA ENTERPRISE VAULT - DO NOT COMMIT THESE FILES
-# -------------------------------------------------------------------
-
-# 1. Cryptographic Master Keys (CRITICAL)
-private.pem
-*.key
-*.pem
-*.p12
-
-# 2. Token Minting Engine (Intellectual Property)
-mint_license.go
-mint.go
-license_generator/
-
-# 3. Compiled Binaries & Go Environment
-PanovistaFirewall.exe
-panovista-proxy
-panovista-proxy.exe
+main.go
+Dockerfile
 *.exe
-*.dll
-*.so
-*.dylib
-go.sum
-
-# 4. Environment Variables & Secrets
 .env
-.env.local
-
-# 5. Local Development Schemas (Unless explicitly intended for public)
-# schemas/corporate_rules.json is allowed, but block local test ones:
-schemas/test_*.json
-*.go
-
-state/
