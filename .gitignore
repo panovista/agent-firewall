@@ -2,3 +2,7 @@ main.go
 Dockerfile
 *.exe
 .env
+# Ignore source code and licensing tools in the public repo
+*.go
+license_generator/
+state/
