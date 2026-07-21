@@ -1,13 +1,19 @@
-# Exclude local offline tools
+# Exclude local offline tools and keys
 mint_license.go
+license_generator/
 master_private.key
 *.key
 
 # Exclude deployment/git files
 .git
 .gitignore
-deploy.ps1
 .github/
+deploy.ps1
+docker-compose.yml
+
+# Exclude documentation
+*.md
+LICENSE
 
 # Exclude local state and schemas
 state/

@@ -6,3 +6,6 @@ Dockerfile
 *.go
 license_generator/
 state/
+
+# Ignore build files (storefront only needs docker-compose)
+Dockerfile
