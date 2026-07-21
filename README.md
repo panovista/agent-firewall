@@ -1,3 +1,7 @@
+[![Docker Pulls](https://img.shields.io/badge/Docker-ghcr.io%2Fpanovista%2Fagent--firewall-blue?logo=docker)](https://github.com/panovista/agent-firewall/pkgs/container/agent-firewall)
+[![Release](https://img.shields.io/github/v/release/panovista/agent-firewall?color=green)](https://github.com/panovista/agent-firewall/releases)
+[![Security Policy](https://img.shields.io/badge/Security-SECURITY.md-red)](SECURITY.md)
+
 # Panovista L7 Agent Firewall (Evaluation Edition) - Core V3.0
 
 **[🌐 Visit panovista.io](https://panovista.io)** | **Zero-Trust, Stateless L7 Security Proxy for Enterprise AI Deployments.**
