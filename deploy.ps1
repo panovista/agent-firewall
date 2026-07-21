@@ -3,7 +3,7 @@
 # =======================================================
 
 $IMAGE_NAME = "ghcr.io/panovista/agent-firewall:latest"
-$VERSION_TAG = "ghcr.io/panovista/agent-firewall:v3.0.0"
+$VERSION_TAG = "ghcr.io/panovista/agent-firewall:v3.0.1" # <-- BUMPED TO 3.0.1
 
 Write-Host "[*] Starting Panovista Core Build Process..." -ForegroundColor Cyan
 

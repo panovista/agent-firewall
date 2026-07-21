@@ -152,7 +152,9 @@ Sovereign builds include:
 * Hardcoded defensive thresholds: 5MB egress volume choking, 300 req/min rate limiting, and a 20-layer deep JSON recursion filter.
 * Injectable PEM-encoded Public Key certificates (`JWT_PUBLIC_KEY`) for full IdP identity access verification.
 
-To upgrade your evaluation environment to a permanent enterprise license, visit **[panovista.io](https://panovista.io)** or contact our sales engineering team at **[ian.ayliffe@panovistamarketing.com](mailto:ian.ayliffe@panovistamarketing.com)**  to receive your scoped Enterprise Token and GHCR Registry Access Keys.
+To upgrade your evaluation environment to a permanent enterprise license, visit **[panovista.io](https://panovista.io)** or contact our sales engineering team at **[ian.ayliffe@panovistamarketing.com](mailto:ian.ayliffe@panovistamarketing.com)**  to receive your scoped Cryptographic Enterprise Token.
+
+
 
 
 
